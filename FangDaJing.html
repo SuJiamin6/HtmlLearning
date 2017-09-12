@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .pic{
+            position: relative;
+            width:400px;
+            height:400px;
+            border:1px solid black;
+            background-image: url("img/beats.jpg");
+            /*设置背景图片尺寸大小为400*400*/
+            background-size:400px 400px;
+            float: left;
+
+        }
+        #pic-inner{
+            position: absolute;
+            width:200px;
+            height:200px;
+            background:darkgray;
+            opacity: 0.3;
+            left:0;
+            top:0;
+            display: none;
+        }
+        .BigDiv{
+            width:400px;
+            height:400px;
+            border:1px solid black;
+            overflow: hidden;
+            float: left;
+            display: none;
+        }
+        .BigDiv img{
+            position: relative;
+            width:800px;
+            float: left;
+            left:0;
+            top:0;
+
+        }
+    </style>
+</head>
+<body>
+    <!--左边的原图-->
+    <div class="pic">
+        <!--灰色的蒙版-->
+        <div id="pic-inner"></div>
+    </div>
+
+    <!--放大后的图片存放在其中，其余地方设置为隐藏-->
+    <div class="BigDiv">
+        <!--放大的图片-->
+        <img id="BigImg" src="img/beats.jpg" alt="">
+    </div>
+</body>
+<script>
+    var pic = document.getElementsByClassName("pic")[0];
+    var BigDiv = document.getElementsByClassName("BigDiv")[0];
+    var picinner = document.getElementById("pic-inner");
+    var BigImg = document.getElementById("BigImg");
+
+    //当鼠标移动到左边原图的时候，绑定的事件
+    pic.onmouseenter = function(){
+        //将蒙版和右边放大后的图片显示出来
+        BigDiv.style.display="block";
+        picinner.style.display="block";
+
+        //当鼠标在左边原图移动的时候，绑定的事件
+        pic.onmousemove = function(e){
+            //e为触发的事件的所有参数值
+            var ev = e || window.event;
+            //确定x、y所在的位置，也就是鼠标当前的位置
+            var x = ev.pageX - picinner.offsetWidth/2 - pic.offsetLeft;
+            var y = ev.pageY - picinner.offsetHeight/2 - pic.offsetTop;
+            //如果鼠标的位置已经超出最左边，就将x的位置置为0开始，
+            //如果鼠标的x位置加上蒙版的宽度，已经超出原图的宽度，
+            //则需要用原图的宽度减去蒙版的宽度，得到x的位置
+            if(x<0){
+                x=0;
+            }else if(x + picinner.offsetWidth > pic.offsetWidth){
+                x = pic.offsetWidth - picinner.offsetWidth;
+            }
+            if(y<0){
+                y=0;
+            }else if(y + picinner.offsetHeight > pic.offsetHeight){
+                y = pic.offsetHeight - picinner.offsetHeight;
+            }
+            //设置蒙版根据鼠标移动到对应的坐标
+            picinner.style.left=x+"px";
+            picinner.style.top=y+"px";
+
+            //设置放大后的图片根据原图的移动，移动到对应的坐标
+            BigImg.style.left=- x*2+"px";
+            BigImg.style.top=- y*2+"px";
+        }
+        //当鼠标移开原图的时候，将蒙版和放大图隐藏
+        pic.onmouseleave = function(){
+            picinner.style.display="none";
+            BigDiv.style.display="none";
+        }
+    }
+</script>
+</html>
